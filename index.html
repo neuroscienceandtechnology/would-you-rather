@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Would You Rather?</title>
+
+<style>
+body{
+margin:0;
+background:#0f172a;
+color:white;
+font-family:Arial,sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+}
+
+.card{
+width:100%;
+max-width:600px;
+background:#1e293b;
+padding:30px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 0 30px rgba(0,0,0,.4);
+}
+
+input{
+width:100%;
+padding:15px;
+border:none;
+border-radius:10px;
+font-size:18px;
+margin-top:15px;
+margin-bottom:15px;
+}
+
+button{
+width:100%;
+padding:16px;
+border:none;
+border-radius:12px;
+font-size:18px;
+cursor:pointer;
+margin-top:10px;
+color:white;
+}
+
+.start{
+background:#22c55e;
+}
+
+.blue{
+background:#2563eb;
+}
+
+.red{
+background:#dc2626;
+}
+
+#game{
+display:none;
+}
+
+#result{
+display:none;
+margin-top:20px;
+font-size:22px;
+}
+
+.counter{
+margin-top:20px;
+color:#94a3b8;
+}
+
+.subtitle{
+color:#94a3b8;
+margin-bottom:25px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div id="welcome">
+
+<h1>🔥 Would You Rather?</h1>
+
+<p class="subtitle">
+See what thousands of people would choose.
+</p>
+
+<input id="nameInput" placeholder="Enter your first name">
+
+<button class="start" onclick="startGame()">
+Start
+</button>
+
+</div>
+
+<div id="game">
+
+<h2 id="welcomeText"></h2>
+
+<div class="counter">
+Questions answered:
+<span id="answered">0</span>
+</div>
+
+<h2 id="question"></h2>
+
+<button id="optionA" class="blue" onclick="vote()"></button>
+
+<button id="optionB" class="red" onclick="vote()"></button>
+
+<div id="result"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{question:"Would you rather...",a:"Get $1,000,000 today",b:"Never pay taxes again"},
+{question:"Would you rather...",a:"Live in Miami",b:"Live in New York"},
+{question:"Would you rather...",a:"Retire at 40",b:"Work only 4 days a week"},
+{question:"Would you rather...",a:"Own a Ferrari",b:"Own a private jet"},
+{question:"Would you rather...",a:"Have unlimited money",b:"Have unlimited free time"},
+{question:"Would you rather...",a:"Travel for free forever",b:"Eat for free forever"},
+{question:"Would you rather...",a:"Be famous",b:"Be rich"},
+{question:"Would you rather...",a:"Own a mansion",b:"Own a yacht"},
+{question:"Would you rather...",a:"Work from home forever",b:"Never work again"},
+{question:"Would you rather...",a:"Have perfect health",b:"Have perfect finances"},
+
+{question:"Would you rather...",a:"Live on the beach",b:"Live in the mountains"},
+{question:"Would you rather...",a:"Fly",b:"Become invisible"},
+{question:"Would you rather...",a:"Own a Tesla",b:"Own a Porsche"},
+{question:"Would you rather...",a:"Never sleep",b:"Never eat"},
+{question:"Would you rather...",a:"Get a free house",b:"Get a free car every year"},
+{question:"Would you rather...",a:"Lose your phone",b:"Lose your wallet"},
+{question:"Would you rather...",a:"Be the smartest person alive",b:"Be the richest person alive"},
+{question:"Would you rather...",a:"Have unlimited vacations",b:"Double your salary forever"},
+{question:"Would you rather...",a:"Live 100 years",b:"Relive your 20s forever"},
+{question:"Would you rather...",a:"Know the future",b:"Change the past"},
+
+{question:"Would you rather...",a:"Be an astronaut",b:"Be a billionaire"},
+{question:"Would you rather...",a:"Win the lottery",b:"Find true love"},
+{question:"Would you rather...",a:"Have a personal chef",b:"Have a personal driver"},
+{question:"Would you rather...",a:"Own Netflix",b:"Own Spotify"},
+{question:"Would you rather...",a:"Live in California",b:"Live in Texas"},
+{question:"Would you rather...",a:"Get paid every day",b:"Get paid once a year"},
+{question:"Would you rather...",a:"Have perfect memory",b:"Have perfect focus"},
+{question:"Would you rather...",a:"Read minds",b:"Predict the future"},
+{question:"Would you rather...",a:"Own Apple stock",b:"Own Tesla stock"},
+{question:"Would you rather...",a:"Work for Google",b:"Work for SpaceX"},
+
+{question:"Would you rather...",a:"Have no internet",b:"Have no air conditioning"},
+{question:"Would you rather...",a:"Live without coffee",b:"Live without pizza"},
+{question:"Would you rather...",a:"Always be early",b:"Always be lucky"},
+{question:"Would you rather...",a:"Speak every language",b:"Play every instrument"},
+{question:"Would you rather...",a:"Have a six-pack forever",b:"Never gain weight"},
+{question:"Would you rather...",a:"Own an island",b:"Own a castle"},
+{question:"Would you rather...",a:"Vacation in Hawaii",b:"Vacation in Europe"},
+{question:"Would you rather...",a:"Drive a Lamborghini",b:"Drive a Rolls-Royce"},
+{question:"Would you rather...",a:"Live in 1985",b:"Live in 2085"},
+{question:"Would you rather...",a:"Be a famous athlete",b:"Be a famous actor"},
+
+{question:"Would you rather...",a:"Watch movies forever",b:"Watch sports forever"},
+{question:"Would you rather...",a:"Use TikTok forever",b:"Use Instagram forever"},
+{question:"Would you rather...",a:"Have free rent forever",b:"Have free food forever"},
+{question:"Would you rather...",a:"Live in Chicago",b:"Live in Los Angeles"},
+{question:"Would you rather...",a:"Own Amazon",b:"Own Microsoft"},
+{question:"Would you rather...",a:"Have a robot assistant",b:"Have a self-driving car"},
+{question:"Would you rather...",a:"Work 20 hours a week",b:"Retire at 50"},
+{question:"Would you rather...",a:"Always get first-class flights",b:"Always stay in luxury hotels"},
+{question:"Would you rather...",a:"Have 10 close friends",b:"Have 1 million followers"},
+{question:"Would you rather...",a:"Win an Oscar",b:"Win a Nobel Prize"},
+
+{question:"Would you rather...",a:"Own a beach house",b:"Own a ski chalet"},
+{question:"Would you rather...",a:"Live in London",b:"Live in Tokyo"},
+{question:"Would you rather...",a:"Have perfect skin",b:"Have perfect hair"},
+{question:"Would you rather...",a:"Be able to teleport",b:"Be able to stop time"},
+{question:"Would you rather...",a:"Own a sports team",b:"Own a movie studio"},
+{question:"Would you rather...",a:"Get $100,000 now",b:"Get $1 million in 10 years"},
+{question:"Would you rather...",a:"Be CEO",b:"Be Founder"},
+{question:"Would you rather...",a:"Live with no taxes",b:"Live with no bills"},
+{question:"Would you rather...",a:"Have a giant house",b:"Live anywhere you want"},
+{question:"Would you rather...",a:"Never age physically",b:"Never age mentally"},
+
+{question:"Would you rather...",a:"Always have Wi-Fi",b:"Always have battery"},
+{question:"Would you rather...",a:"Be a top surgeon",b:"Be a top entrepreneur"},
+{question:"Would you rather...",a:"Own Bitcoin",b:"Own Nvidia stock"},
+{question:"Would you rather...",a:"Sleep 4 hours",b:"Need no sleep"},
+{question:"Would you rather...",a:"Travel to Mars",b:"Travel to the deep ocean"},
+{question:"Would you rather...",a:"Live in a penthouse",b:"Live on a ranch"},
+{question:"Would you rather...",a:"Get free gas forever",b:"Get free flights forever"},
+{question:"Would you rather...",a:"Have a yacht",b:"Have a helicopter"},
+{question:"Would you rather...",a:"Live near family",b:"Live in your dream city"},
+{question:"Would you rather...",a:"Know every fact",b:"Know every skill"},
+
+{question:"Would you rather...",a:"Have 1 billion dollars",b:"Live 200 years"},
+{question:"Would you rather...",a:"Be the fastest runner",b:"Be the strongest person"},
+{question:"Would you rather...",a:"Own Disney",b:"Own Nike"},
+{question:"Would you rather...",a:"Always win arguments",b:"Always be liked"},
+{question:"Would you rather...",a:"Live in a smart home",b:"Live in a luxury resort"},
+{question:"Would you rather...",a:"Be a famous YouTuber",b:"Be a famous podcaster"},
+{question:"Would you rather...",a:"Get a promotion",b:"Get a 50% raise"},
+{question:"Would you rather...",a:"Never use email",b:"Never use text messages"},
+{question:"Would you rather...",a:"Be able to code anything",b:"Be able to sell anything"},
+{question:"Would you rather...",a:"Own 100 rental properties",b:"Own one giant company"},
+
+{question:"Would you rather...",a:"Live in a world with no crime",b:"Live in a world with no disease"},
+{question:"Would you rather...",a:"Be able to breathe underwater",b:"Be able to survive in space"},
+{question:"Would you rather...",a:"Have every meal cooked for you",b:"Have every chore done for you"},
+{question:"Would you rather...",a:"Be rich and anonymous",b:"Be famous and wealthy"},
+{question:"Would you rather...",a:"Own a private island",b:"Own a mountain resort"},
+{question:"Would you rather...",a:"Never pay for housing",b:"Never pay for transportation"},
+{question:"Would you rather...",a:"Be the best investor",b:"Be the best entrepreneur"},
+{question:"Would you rather...",a:"Live in the future",b:"Live in the past"},
+{question:"Would you rather...",a:"Have perfect confidence",b:"Have perfect discipline"},
+{question:"Would you rather...",a:"Know how you'll die",b:"Know when you'll die"},
+
+{question:"Would you rather...",a:"Own OpenAI",b:"Own SpaceX"},
+{question:"Would you rather...",a:"Get free healthcare forever",b:"Get free housing forever"},
+{question:"Would you rather...",a:"Have a dream job",b:"Never need a job"},
+{question:"Would you rather...",a:"Always make the right decision",b:"Always be lucky"},
+{question:"Would you rather...",a:"Live beside the ocean",b:"Live beside a lake"},
+{question:"Would you rather...",a:"Own every book",b:"Own every movie"},
+{question:"Would you rather...",a:"Have unlimited energy",b:"Have unlimited motivation"},
+{question:"Would you rather...",a:"Meet your future self",b:"Meet your younger self"},
+{question:"Would you rather...",a:"Become president",b:"Become a billionaire"},
+{question:"Would you rather...",a:"Have the perfect life",b:"Have the perfect family"}
+
+];
+
+
+let current = Math.floor(
+Math.random() * questions.length
+);
+
+let answered =
+parseInt(localStorage.getItem("answered")) || 0;
+
+function startGame(){
+
+let name =
+document.getElementById("nameInput").value;
+
+if(name.trim()==="") return;
+
+localStorage.setItem("name",name);
+
+document.getElementById("welcome").style.display="none";
+document.getElementById("game").style.display="block";
+
+loadUser();
+
+}
+
+function loadUser(){
+
+let name =
+localStorage.getItem("name");
+
+document.getElementById("welcomeText").innerHTML =
+"Welcome back, " + name + " 👋";
+
+document.getElementById("answered").innerText =
+answered;
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+let q = questions[current];
+
+document.getElementById("question").innerText =
+q.question;
+
+document.getElementById("optionA").innerText =
+q.a;
+
+document.getElementById("optionB").innerText =
+q.b;
+
+}
+
+function vote(){
+
+answered++;
+
+localStorage.setItem("answered",answered);
+
+document.getElementById("answered").innerText =
+answered;
+
+let a = Math.floor(Math.random()*50)+25;
+let b = 100-a;
+
+document.getElementById("result").style.display="block";
+
+document.getElementById("result").innerHTML =
+"🔥 " + a + "% of people agreed with you";
+
+setTimeout(nextQuestion,1200);
+
+}
+
+function nextQuestion(){
+
+let oldQuestion = current;
+
+while(current === oldQuestion){
+
+current = Math.floor(
+Math.random() * questions.length
+);
+
+}
+
+document.getElementById("result").style.display="none";
+
+loadQuestion();
+
+}
+
+if(localStorage.getItem("name")){
+
+document.getElementById("welcome").style.display="none";
+document.getElementById("game").style.display="block";
+
+loadUser();
+
+}
+
+</script>
+
+</body>
+</html>
